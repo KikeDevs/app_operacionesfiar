@@ -1,0 +1,43 @@
+workflows:
+  ios-adhoc:
+    name: Eco Operaciones - iOS (ad-hoc / uso interno)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.ecosistemadecomunicacion.ecoOperaciones
+      groups:
+        - app_store_credentials # crea este grupo en Codemagic > Teams > Group variables
+                                  # con tu App Store Connect API key (para firma automática)
+    scripts:
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles
+      - name: Install Flutter dependencies
+        script: |
+          flutter packages pub get
+      - name: Install CocoaPods dependencies
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+      - name: Generate launcher icons and splash
+        script: |
+          dart run flutter_launcher_icons
+          dart run flutter_native_splash:create
+      - name: Flutter build ipa (ad-hoc)
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email:
+        recipients:
+          - luisenriqueiscc@gmail.com
+        notify:
+          success: true
+          failure: true
