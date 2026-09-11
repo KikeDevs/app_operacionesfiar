@@ -1,18 +1,17 @@
 workflows:
-  ios-adhoc:
-    name: Eco Operaciones - iOS (ad-hoc / uso interno)
+  ios-testflight:
+    name: Eco Operaciones - iOS (TestFlight interno)
     max_build_duration: 60
     instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: FIAR
     environment:
       flutter: stable
       xcode: latest
       cocoapods: default
       ios_signing:
-        distribution_type: ad_hoc
+        distribution_type: app_store
         bundle_identifier: com.ecosistemadecomunicacion.ecoOperaciones
-      groups:
-        - app_store_credentials # crea este grupo en Codemagic > Teams > Group variables
-                                  # con tu App Store Connect API key (para firma automática)
     scripts:
       - name: Set up code signing
         script: |
@@ -27,7 +26,7 @@ workflows:
         script: |
           dart run flutter_launcher_icons
           dart run flutter_native_splash:create
-      - name: Flutter build ipa (ad-hoc)
+      - name: Flutter build ipa (App Store / TestFlight)
         script: |
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
@@ -35,6 +34,11 @@ workflows:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
     publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        beta_groups:
+          - Equipo Interno
       email:
         recipients:
           - luisenriqueiscc@gmail.com
