@@ -12,14 +12,14 @@ workflows:
       vars:
         BUNDLE_ID: "com.ecosistemadecomunicacion.ecoOperaciones"
     scripts:
+      - name: Use System Default Keychain
+        script: |
+          keychain use-login
       - name: Fetch signing files (crea certificado y perfil si no existen)
         script: |
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --create
-      - name: Use System Default Keychain
-        script: |
-          keychain use-login
       - name: Add certificates to keychain
         script: |
           keychain add-certificates
