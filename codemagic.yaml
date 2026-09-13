@@ -11,9 +11,6 @@ workflows:
       cocoapods: default
       vars:
         BUNDLE_ID: "com.ecosistemadecomunicacion.ecoOperaciones"
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.ecosistemadecomunicacion.ecoOperaciones
     scripts:
       - name: Fetch signing files (crea certificado y perfil si no existen)
         script: |
