@@ -9,11 +9,24 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      vars:
+        BUNDLE_ID: "com.ecosistemadecomunicacion.ecoOperaciones"
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.ecosistemadecomunicacion.ecoOperaciones
     scripts:
-      - name: Set up code signing
+      - name: Fetch signing files (crea certificado y perfil si no existen)
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+      - name: Use System Default Keychain
+        script: |
+          keychain use-login
+      - name: Add certificates to keychain
+        script: |
+          keychain add-certificates
+      - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
       - name: Install Flutter dependencies
